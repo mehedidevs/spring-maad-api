@@ -3,6 +3,7 @@ package com.mehedi.maad.api.services.impl;
 import com.mehedi.maad.api.entities.User;
 import com.mehedi.maad.api.repositories.UserRepository;
 import com.mehedi.maad.api.services.UserService;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User deleteUser(Integer userId) {
-        return null;
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User Not Found")
+        );
+        userRepository.delete(user);
+
+        return user;
     }
 
     @Override
     public User updateUser(User user, Integer userId) {
-        return null;
+
+        User existingUserduser = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User Not Found")
+        );
+        existingUserduser.setId(userId);
+        existingUserduser.setName(user.getName());
+        existingUserduser.setEmail(user.getEmail());
+
+        userRepository.save(existingUserduser);
+
+        return existingUserduser;
+
+
     }
 
     @Override
