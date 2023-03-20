@@ -1,12 +1,16 @@
 package com.mehedi.maad.api.controllers;
 
+import com.mehedi.maad.api.entities.ResponseUpload;
 import com.mehedi.maad.api.entities.User;
 import com.mehedi.maad.api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -15,6 +19,9 @@ public class UserController {
 
     @Autowired
     public UserService userService;
+
+    @Value("${project.image}")
+    String path;
 
     @PostMapping("/user")
     public ResponseEntity<User> createUser(
@@ -46,6 +53,22 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUser() {
         List<User> users = userService.getAllUser();
         return new ResponseEntity<>(users, HttpStatus.OK);
+
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<ResponseUpload> uploadFile(
+            @RequestParam("file") MultipartFile file
+
+    ) {
+        ResponseUpload responseUpload = null;
+        try {
+            responseUpload = userService.UploadFile(path, file);
+        } catch (IOException e) {
+            new ResponseEntity<>(responseUpload, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(responseUpload, HttpStatus.OK);
+
 
     }
 
