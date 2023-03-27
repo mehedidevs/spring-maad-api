@@ -3,14 +3,19 @@ package com.mehedi.maad.api.controllers;
 import com.mehedi.maad.api.entities.ResponseUpload;
 import com.mehedi.maad.api.entities.User;
 import com.mehedi.maad.api.services.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -53,7 +58,6 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUser() {
         List<User> users = userService.getAllUser();
         return new ResponseEntity<>(users, HttpStatus.OK);
-
     }
 
     @PostMapping("/image")
@@ -70,6 +74,17 @@ public class UserController {
         return new ResponseEntity<>(responseUpload, HttpStatus.OK);
 
 
+    }
+
+    @GetMapping(value = "/image_file/{imgName}",
+            produces = MediaType.IMAGE_JPEG_VALUE)
+    public void downloadFileLink(
+            @PathVariable("imgName") String fileName,
+            HttpServletResponse response
+    ) throws IOException {
+        InputStream inputStream = userService.getLink(path, fileName);
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(inputStream, response.getOutputStream());
     }
 
 

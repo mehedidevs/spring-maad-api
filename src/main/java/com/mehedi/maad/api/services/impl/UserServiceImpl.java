@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -88,4 +87,16 @@ public class UserServiceImpl implements UserService {
 
         return new ResponseUpload("File Uploaded !", true);
     }
+
+    @Override
+    public InputStream getLink(String path, String fileName) throws FileNotFoundException {
+
+        String fullPath = path + File.separator + fileName;
+        InputStream is = new FileInputStream(fullPath);
+
+        return is;
+
+    }
+
+
 }
